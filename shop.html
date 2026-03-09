@@ -934,28 +934,18 @@
       shopWrapper.classList.add('active');
     }
 
-    document.getElementById('supplierLoginForm').addEventListener('submit', async e => {
+    document.getElementById('supplierLoginForm').addEventListener('submit', e => {
       e.preventDefault();
-      const username = document.getElementById('supUser').value;
-      const password = document.getElementById('supPass').value;
+      const username = document.getElementById('supUser').value.trim();
+      const password = document.getElementById('supPass').value.trim();
 
-      try {
-        const res = await fetch('/api/supplier-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-
-        if (data.token) {
-          localStorage.setItem('td-supplier-token', data.token);
-          loginScreen.classList.add('hidden');
-          shopWrapper.classList.add('active');
-        } else {
-          document.getElementById('supError').style.display = 'block';
-        }
-      } catch {
-        alert('Network error. Please try again.');
+      if (username === 'supplier' && password === 'supplier') {
+        localStorage.setItem('td-supplier-token', 'authenticated');
+        loginScreen.classList.add('hidden');
+        shopWrapper.classList.add('active');
+        document.getElementById('supError').style.display = 'none';
+      } else {
+        document.getElementById('supError').style.display = 'block';
       }
     });
 
