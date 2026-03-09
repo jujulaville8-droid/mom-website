@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — The Tailor's Daughter</title>
+  <link rel="icon" href="assets/images/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f2ef;
+      --bg-dark: #0c0b09;
+      --text: #1a1a18;
+      --text-light: #6b6860;
+      --gold: #c9a84c;
+      --accent: #8b6914;
+      --cream: #faf8f5;
+      --white: #ffffff;
+      --green: #2d6a1e;
+      --orange: #c47a20;
+      --blue: #2a5fad;
+      --red: #a63d2f;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Montserrat', -apple-system, sans-serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ========================
+       LOGIN SCREEN
+       ======================== */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-dark);
+      padding: 24px;
+    }
+
+    .login-box {
+      background: var(--white);
+      padding: 56px 48px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .login-box img {
+      height: 56px;
+      margin: 0 auto 32px;
+    }
+
+    .login-box h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+
+    .login-box p {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 32px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(0,0,0,0.1);
+      font-family: var(--font-body);
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+      background: var(--bg);
+    }
+
+    .login-box input:focus { border-color: var(--accent); }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--bg-dark);
+      color: var(--white);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover { background: var(--accent); }
+
+    .login-error {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    /* ========================
+       DASHBOARD
+       ======================== */
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    .login-screen.hidden { display: none; }
+
+    .dash-nav {
+      background: var(--bg-dark);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .dash-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dash-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .dash-nav img { height: 32px; }
+
+    .dash-nav-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .dash-nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .dash-nav-actions a,
+    .dash-nav-actions button {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.3s;
+      text-decoration: none;
+    }
+
+    .dash-nav-actions a:hover,
+    .dash-nav-actions button:hover { color: var(--white); }
+
+    /* Stats */
+    .dash-stats {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 24px;
+      border-left: 3px solid var(--gold);
+    }
+
+    .stat-card-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .stat-card-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .stat-card:nth-child(2) { border-color: var(--orange); }
+    .stat-card:nth-child(3) { border-color: var(--blue); }
+    .stat-card:nth-child(4) { border-color: var(--green); }
+
+    /* Orders table */
+    .dash-content {
+      max-width: 1200px;
+      margin: 0 auto 48px;
+      padding: 0 32px;
+    }
+
+    .dash-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .dash-section-header h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 400;
+    }
+
+    .refresh-btn {
+      padding: 8px 20px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: var(--white);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: var(--bg-dark);
+      color: var(--white);
+      border-color: var(--bg-dark);
+    }
+
+    .orders-table {
+      width: 100%;
+      background: var(--white);
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    .orders-table th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      background: var(--cream);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .orders-table td {
+      padding: 16px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      vertical-align: top;
+    }
+
+    .orders-table tr:hover td {
+      background: rgba(201,168,76,0.04);
+    }
+
+    .order-id-cell {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .order-company {
+      font-weight: 600;
+    }
+
+    .order-contact-info {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-processing { background: #cce5ff; color: #004085; }
+    .status-fulfilled { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    .order-items-list {
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .order-items-list .item-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .order-total {
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .order-actions select {
+      padding: 6px 10px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: var(--white);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .order-actions select:focus {
+      border-color: var(--accent);
+    }
+
+    .order-date {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .order-notes {
+      font-size: 11px;
+      color: var(--text-light);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-light);
+    }
+
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 300;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    /* ORDER DETAIL MODAL */
+    .detail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      padding: 24px;
+    }
+
+    .detail-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .detail-modal {
+      background: var(--white);
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 48px;
+    }
+
+    .detail-modal h2 {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 300;
+      margin-bottom: 4px;
+    }
+
+    .detail-meta {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 32px;
+    }
+
+    .detail-section {
+      margin-bottom: 24px;
+    }
+
+    .detail-section h4 {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .detail-section p {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .detail-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+
+    .detail-items th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .detail-items td {
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .detail-items .total-row td {
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: none;
+      padding-top: 12px;
+    }
+
+    .detail-close {
+      margin-top: 24px;
+      padding: 14px 32px;
+      background: var(--bg-dark);
+      color: var(--white);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .detail-close:hover { background: var(--accent); }
+
+    @media (max-width: 768px) {
+      .dash-stats { grid-template-columns: repeat(2, 1fr); }
+      .orders-table { display: block; overflow-x: auto; }
+      .detail-modal { padding: 32px 24px; }
+      .login-box { padding: 40px 32px; }
+    }
+
+    @media (max-width: 480px) {
+      .dash-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <img src="assets/images/logo.png" alt="The Tailor's Daughter">
+      <h1>Admin Dashboard</h1>
+      <p>Sign in to manage orders</p>
+      <form id="loginForm">
+        <input type="text" id="loginUser" placeholder="Username" required autocomplete="username">
+        <input type="password" id="loginPass" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" class="login-btn">Sign In</button>
+      </form>
+      <p class="login-error" id="loginError">Invalid username or password</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <nav class="dash-nav">
+      <div class="dash-nav-inner">
+        <div class="dash-nav-left">
+          <img src="assets/images/logo.png" alt="The Tailor's Daughter">
+          <span class="dash-nav-title">Admin Dashboard</span>
+        </div>
+        <div class="dash-nav-actions">
+          <a href="/">View Site</a>
+          <a href="/shop.html">View Shop</a>
+          <button id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Stats -->
+    <div class="dash-stats" id="dashStats">
+      <div class="stat-card">
+        <div class="stat-card-label">Total Orders</div>
+        <div class="stat-card-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Pending</div>
+        <div class="stat-card-value" id="statPending">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Processing</div>
+        <div class="stat-card-value" id="statProcessing">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Fulfilled</div>
+        <div class="stat-card-value" id="statFulfilled">0</div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="dash-content">
+      <div class="dash-section-header">
+        <h2>Recent Orders</h2>
+        <button class="refresh-btn" id="refreshBtn">Refresh</button>
+      </div>
+      <div id="ordersContainer">
+        <div class="empty-state">
+          <h3>No orders yet</h3>
+          <p>Orders placed by suppliers will appear here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER DETAIL MODAL -->
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-modal" id="detailModal"></div>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('td-admin-token');
+    let orders = [];
+
+    // ========================
+    // LOGIN
+    // ========================
+    if (token) showDashboard();
+
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.token) {
+          token = data.token;
+          localStorage.setItem('td-admin-token', token);
+          showDashboard();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch {
+        alert('Network error');
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      token = null;
+      localStorage.removeItem('td-admin-token');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('active');
+    });
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboard').classList.add('active');
+      loadOrders();
+    }
+
+    // ========================
+    // LOAD ORDERS
+    // ========================
+    async function loadOrders() {
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (res.status === 401) {
+          localStorage.removeItem('td-admin-token');
+          location.reload();
+          return;
+        }
+
+        orders = await res.json();
+        renderOrders();
+        updateStats();
+      } catch {
+        document.getElementById('ordersContainer').innerHTML =
+          '<div class="empty-state"><h3>Error loading orders</h3><p>Please try refreshing.</p></div>';
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadOrders);
+
+    // ========================
+    // RENDER
+    // ========================
+    function updateStats() {
+      document.getElementById('statTotal').textContent = orders.length;
+      document.getElementById('statPending').textContent = orders.filter(o => o.status === 'pending').length;
+      document.getElementById('statProcessing').textContent = orders.filter(o => o.status === 'processing').length;
+      document.getElementById('statFulfilled').textContent = orders.filter(o => o.status === 'fulfilled').length;
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('ordersContainer');
+
+      if (orders.length === 0) {
+        container.innerHTML = '<div class="empty-state"><h3>No orders yet</h3><p>Orders placed by suppliers will appear here.</p></div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orders.map(o => `
+              <tr onclick="showDetail('${o.id}')" style="cursor:pointer">
+                <td class="order-id-cell">${o.id}</td>
+                <td>
+                  <div class="order-company">${esc(o.company)}</div>
+                  <div class="order-contact-info">${esc(o.contact)} &middot; ${esc(o.email)}</div>
+                  ${o.notes ? `<div class="order-notes">"${esc(o.notes)}"</div>` : ''}
+                </td>
+                <td>
+                  <div class="order-items-list">
+                    ${o.items.slice(0, 3).map(i => `
+                      <div class="item-line">
+                        <span>${esc(i.name)} x${i.qty}</span>
+                        <span>$${(i.price * i.qty).toFixed(2)}</span>
+                      </div>
+                    `).join('')}
+                    ${o.items.length > 3 ? `<div style="color:var(--text-light);font-style:italic">+${o.items.length - 3} more items</div>` : ''}
+                  </div>
+                </td>
+                <td><strong>$${o.total.toFixed(2)}</strong></td>
+                <td><span class="status-badge status-${o.status}">${o.status}</span></td>
+                <td class="order-date">${new Date(o.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                <td class="order-actions" onclick="event.stopPropagation()">
+                  <select onchange="updateStatus('${o.id}', this.value)">
+                    ${['pending','processing','fulfilled','cancelled'].map(s =>
+                      `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`
+                    ).join('')}
+                  </select>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str || '';
+      return d.innerHTML;
+    }
+
+    // ========================
+    // UPDATE STATUS
+    // ========================
+    async function updateStatus(id, status) {
+      try {
+        await fetch('/api/orders', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ id, status })
+        });
+        await loadOrders();
+      } catch {
+        alert('Error updating status');
+      }
+    }
+
+    // ========================
+    // ORDER DETAIL
+    // ========================
+    function showDetail(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+
+      const modal = document.getElementById('detailModal');
+      modal.innerHTML = `
+        <h2>Order ${o.id}</h2>
+        <div class="detail-meta">
+          <span class="status-badge status-${o.status}">${o.status}</span>
+          &nbsp;&middot;&nbsp;
+          ${new Date(o.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </div>
+
+        <div class="detail-section">
+          <h4>Customer Information</h4>
+          <p>
+            <strong>${esc(o.company)}</strong><br>
+            ${esc(o.contact)}<br>
+            ${esc(o.email)}${o.phone ? '<br>' + esc(o.phone) : ''}
+          </p>
+        </div>
+
+        ${o.notes ? `
+        <div class="detail-section">
+          <h4>Order Notes</h4>
+          <p>${esc(o.notes)}</p>
+        </div>
+        ` : ''}
+
+        <div class="detail-section">
+          <h4>Order Items</h4>
+          <table class="detail-items">
+            <thead>
+              <tr><th>Product</th><th>Qty</th><th>Unit Price</th><th style="text-align:right">Subtotal</th></tr>
+            </thead>
+            <tbody>
+              ${o.items.map(i => `
+                <tr>
+                  <td>${esc(i.name)}</td>
+                  <td>${i.qty}</td>
+                  <td>$${i.price.toFixed(2)}</td>
+                  <td style="text-align:right">$${(i.price * i.qty).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td colspan="3">Total</td>
+                <td style="text-align:right">$${o.total.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button class="detail-close" onclick="document.getElementById('detailOverlay').classList.remove('open')">Close</button>
+      `;
+
+      document.getElementById('detailOverlay').classList.add('open');
+    }
+
+    document.getElementById('detailOverlay').addEventListener('click', e => {
+      if (e.target === e.currentTarget) e.target.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
