@@ -1,31 +1,41 @@
 const fs = require('fs');
-const path = '/tmp/td-orders.json';
+const ORDERS_PATH = '/tmp/td-orders.json';
 const TOKEN = 'td-admin-' + Buffer.from('tailorsdaughter2026').toString('base64');
 
 function getOrders() {
   try {
-    return JSON.parse(fs.readFileSync(path, 'utf8'));
+    return JSON.parse(fs.readFileSync(ORDERS_PATH, 'utf8'));
   } catch {
     return [];
   }
 }
 
 function saveOrders(orders) {
-  fs.writeFileSync(path, JSON.stringify(orders, null, 2));
+  fs.writeFileSync(ORDERS_PATH, JSON.stringify(orders, null, 2));
 }
 
 function isAdmin(req) {
-  const auth = req.headers.authorization || '';
+  const auth = req.headers.authorization || req.headers.Authorization || '';
   return auth.replace('Bearer ', '') === TOKEN;
 }
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Content-Type', 'application/json');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  let body = req.body;
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch { body = {}; }
+  }
+  if (!body) body = {};
 
   // POST — create new order (public)
   if (req.method === 'POST') {
-    const body = req.body || {};
-
     if (!body.company || !body.contact || !body.email || !body.items?.length) {
       return res.status(400).json({ error: 'Missing required fields: company, contact, email, items' });
     }
@@ -64,7 +74,7 @@ module.exports = (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { id, status } = req.body || {};
+    const { id, status } = body;
     const validStatuses = ['pending', 'processing', 'fulfilled', 'cancelled'];
 
     if (!id || !validStatuses.includes(status)) {
@@ -91,7 +101,7 @@ module.exports = (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { id } = req.body || {};
+    const { id } = body;
     let orders = getOrders();
     const before = orders.length;
     orders = orders.filter(o => o.id !== id);
