@@ -110,7 +110,7 @@
   <div class="login-box">
     <img src="assets/images/logo.png" alt="The Tailor's Daughter">
     <h1>The Tailor's <em>Daughter</em></h1>
-    <p>Sign in to access the supplier portal or admin dashboard.</p>
+    <p>Sign in to access the wholesale portal or admin dashboard.</p>
     <form id="loginForm">
       <input type="text" id="username" placeholder="Username" required>
       <input type="password" id="password" placeholder="Password" required>
@@ -140,8 +140,8 @@
         return;
       }
 
-      // Supplier login
-      if (username === 'supplier' && password === 'supplier') {
+      // Wholesale customer login
+      if (username === 'wholesale' && password === 'wholesale') {
         localStorage.setItem('td-supplier-token', 'authenticated');
         errorEl.style.display = 'none';
         window.location.href = '/shop.html';

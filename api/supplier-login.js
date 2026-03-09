@@ -1,5 +1,5 @@
-const SUPPLIER_USER = 'supplier';
-const SUPPLIER_PASS = 'supplier';
+const SUPPLIER_USER = 'wholesale';
+const SUPPLIER_PASS = 'wholesale';
 const TOKEN = 'td-supplier-' + Buffer.from('tailorsdaughter-supplier-2026').toString('base64');
 
 module.exports = async (req, res) => {
