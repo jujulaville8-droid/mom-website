@@ -798,23 +798,7 @@
 </head>
 <body>
 
-  <!-- SUPPLIER LOGIN GATE -->
-  <div class="supplier-login" id="supplierLogin">
-    <div class="supplier-login-box">
-      <img src="assets/images/logo.png" alt="The Tailor's Daughter">
-      <h1>Supplier Portal</h1>
-      <p>This area is for authorized wholesale suppliers only. Please sign in to access the product catalog and place orders.</p>
-      <form id="supplierLoginForm">
-        <input type="text" id="supUser" placeholder="Username" required autocomplete="username">
-        <input type="password" id="supPass" placeholder="Password" required autocomplete="current-password">
-        <button type="submit" class="supplier-login-btn">Sign In</button>
-      </form>
-      <p class="supplier-login-error" id="supError">Invalid credentials. Contact us for access.</p>
-      <a href="/" style="display:inline-block;margin-top:24px;font-size:12px;color:rgba(0,0,0,0.4);">Back to main site</a>
-    </div>
-  </div>
-
-  <!-- SHOP CONTENT (hidden until login) -->
+  <!-- SHOP CONTENT (hidden until authenticated — redirects to /login.html otherwise) -->
   <div class="shop-wrapper" id="shopWrapper">
 
   <!-- Nav -->
@@ -923,45 +907,27 @@
 
   <script>
     // ==========================================
-    // SUPPLIER AUTH
+    // SUPPLIER AUTH — redirect to login if not authenticated
     // ==========================================
-    const supplierToken = localStorage.getItem('td-supplier-token');
-    const loginScreen = document.getElementById('supplierLogin');
-    const shopWrapper = document.getElementById('shopWrapper');
-
-    if (supplierToken) {
-      loginScreen.classList.add('hidden');
-      shopWrapper.classList.add('active');
+    if (!localStorage.getItem('td-supplier-token')) {
+      window.location.href = '/login.html';
     }
 
-    document.getElementById('supplierLoginForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const username = document.getElementById('supUser').value.trim();
-      const password = document.getElementById('supPass').value.trim();
-
-      if (username === 'supplier' && password === 'supplier') {
-        localStorage.setItem('td-supplier-token', 'authenticated');
-        loginScreen.classList.add('hidden');
-        shopWrapper.classList.add('active');
-        document.getElementById('supError').style.display = 'none';
-      } else {
-        document.getElementById('supError').style.display = 'block';
-      }
-    });
+    var shopWrapper = document.getElementById('shopWrapper');
+    if (shopWrapper) shopWrapper.classList.add('active');
 
     function supplierLogout() {
       localStorage.removeItem('td-supplier-token');
       localStorage.removeItem('td-cart');
-      loginScreen.classList.remove('hidden');
-      shopWrapper.classList.remove('active');
+      window.location.href = '/login.html';
     }
 
-    document.getElementById('supplierLogout').addEventListener('click', e => {
+    document.getElementById('supplierLogout').addEventListener('click', function(e) {
       e.preventDefault();
       supplierLogout();
     });
 
-    document.getElementById('navLogout').addEventListener('click', e => {
+    document.getElementById('navLogout').addEventListener('click', function(e) {
       e.preventDefault();
       supplierLogout();
     });
