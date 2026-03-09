@@ -42,7 +42,17 @@
 
   <!-- Hero -->
   <section class="hero" id="hero">
-    <div class="hero-bg" style="background-image: url('assets/images/DSC_0349.jpg')"></div>
+    <div class="hero-slideshow">
+      <div class="hero-slide active">
+        <img src="assets/images/DSC_0349.jpg" alt="The Tailor's Daughter store interior">
+      </div>
+      <div class="hero-slide">
+        <img src="assets/images/DSC_0430.jpg" alt="Store shelves and products">
+      </div>
+      <div class="hero-slide">
+        <img src="assets/images/DSC_0186.jpg" alt="Curated Caribbean goods on display">
+      </div>
+    </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <p class="hero-eyebrow" data-animate>V.C. Bird International Airport, Antigua</p>
@@ -345,6 +355,12 @@
       </div>
     </div>
   </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
 
   <script src="script.js"></script>
 </body>
