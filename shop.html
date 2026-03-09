@@ -38,6 +38,94 @@
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
+    /* LOGIN GATE */
+    .supplier-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-dark);
+      padding: 24px;
+    }
+
+    .supplier-login.hidden { display: none; }
+
+    .supplier-login-box {
+      background: var(--white);
+      padding: 56px 48px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .supplier-login-box img {
+      height: 56px;
+      margin: 0 auto 32px;
+    }
+
+    .supplier-login-box h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+
+    .supplier-login-box p {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .supplier-login-box input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(0,0,0,0.1);
+      font-family: var(--font-body);
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+      background: #f4f2ef;
+    }
+
+    .supplier-login-box input:focus { border-color: var(--accent); }
+
+    .supplier-login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--bg-dark);
+      color: var(--white);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .supplier-login-btn:hover { background: var(--accent); }
+
+    .supplier-login-error {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .supplier-login-box .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      /* override since parent bg is dark */
+    }
+
+    .shop-wrapper { display: none; }
+    .shop-wrapper.active { display: block; }
+
     /* NAV */
     .shop-nav {
       position: sticky;
@@ -710,12 +798,32 @@
 </head>
 <body>
 
+  <!-- SUPPLIER LOGIN GATE -->
+  <div class="supplier-login" id="supplierLogin">
+    <div class="supplier-login-box">
+      <img src="assets/images/logo.png" alt="The Tailor's Daughter">
+      <h1>Supplier Portal</h1>
+      <p>This area is for authorized wholesale suppliers only. Please sign in to access the product catalog and place orders.</p>
+      <form id="supplierLoginForm">
+        <input type="text" id="supUser" placeholder="Username" required autocomplete="username">
+        <input type="password" id="supPass" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" class="supplier-login-btn">Sign In</button>
+      </form>
+      <p class="supplier-login-error" id="supError">Invalid credentials. Contact us for access.</p>
+      <a href="/" style="display:inline-block;margin-top:24px;font-size:12px;color:rgba(0,0,0,0.4);">Back to main site</a>
+    </div>
+  </div>
+
+  <!-- SHOP CONTENT (hidden until login) -->
+  <div class="shop-wrapper" id="shopWrapper">
+
   <!-- Nav -->
   <nav class="shop-nav">
     <div class="shop-nav-inner">
       <a href="/" class="shop-nav-logo"><img src="assets/images/logo.png" alt="The Tailor's Daughter"></a>
       <ul class="shop-nav-links">
         <li><a href="/">Home</a></li>
+        <li><a href="#" id="navLogout" style="color:var(--red)">Logout</a></li>
         <li>
           <button class="cart-btn" id="cartToggle">
             Order Cart <span class="cart-badge" id="cartBadge"></span>
@@ -808,10 +916,66 @@
 
   <!-- Footer -->
   <footer class="shop-footer">
-    <p>&copy; 2026 The Tailor's Daughter. <a href="/">Back to main site</a></p>
+    <p>&copy; 2026 The Tailor's Daughter. <a href="/">Back to main site</a> &middot; <a href="#" id="supplierLogout">Logout</a></p>
   </footer>
 
+  </div><!-- end .shop-wrapper -->
+
   <script>
+    // ==========================================
+    // SUPPLIER AUTH
+    // ==========================================
+    const supplierToken = localStorage.getItem('td-supplier-token');
+    const loginScreen = document.getElementById('supplierLogin');
+    const shopWrapper = document.getElementById('shopWrapper');
+
+    if (supplierToken) {
+      loginScreen.classList.add('hidden');
+      shopWrapper.classList.add('active');
+    }
+
+    document.getElementById('supplierLoginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('supUser').value;
+      const password = document.getElementById('supPass').value;
+
+      try {
+        const res = await fetch('/api/supplier-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.token) {
+          localStorage.setItem('td-supplier-token', data.token);
+          loginScreen.classList.add('hidden');
+          shopWrapper.classList.add('active');
+        } else {
+          document.getElementById('supError').style.display = 'block';
+        }
+      } catch {
+        alert('Network error. Please try again.');
+      }
+    });
+
+    function supplierLogout() {
+      localStorage.removeItem('td-supplier-token');
+      localStorage.removeItem('td-cart');
+      loginScreen.classList.remove('hidden');
+      shopWrapper.classList.remove('active');
+    }
+
+    document.getElementById('supplierLogout').addEventListener('click', e => {
+      e.preventDefault();
+      supplierLogout();
+    });
+
+    document.getElementById('navLogout').addEventListener('click', e => {
+      e.preventDefault();
+      supplierLogout();
+    });
+
     // ==========================================
     // PRODUCT DATA
     // ==========================================
