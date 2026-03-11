@@ -357,7 +357,7 @@ body.nav-open .cursor-glow {
 /* Hero decorative frame */
 .hero-frame {
   position: absolute;
-  inset: 40px;
+  inset: 24px;
   border: 1px solid rgba(201, 168, 76, 0.2);
   pointer-events: none;
   z-index: 2;
@@ -415,9 +415,9 @@ body.nav-open .cursor-glow {
 .hero-title {
   font-family: var(--font-display);
   font-weight: 300;
-  line-height: 1;
+  line-height: 1.15;
   margin-bottom: 24px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-title-line {
@@ -1522,7 +1522,7 @@ body.nav-open .cursor-glow {
   }
 
   .hero-frame {
-    inset: 20px;
+    inset: 12px;
   }
 
   .footer-grid {
