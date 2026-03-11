@@ -328,3 +328,18 @@ if (window.matchMedia('(pointer: fine)').matches) {
 
   animateGlow();
 }
+
+// ============================================
+// SOCIAL ICON MAGNETIC HOVER
+// ============================================
+document.querySelectorAll('.contact-social a, .footer-social a').forEach(icon => {
+  icon.addEventListener('mousemove', e => {
+    const rect = icon.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    icon.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) translateY(-3px)`;
+  });
+  icon.addEventListener('mouseleave', () => {
+    icon.style.transform = '';
+  });
+});
